@@ -1,10 +1,12 @@
 import { FC, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from '../../services/store';
 
+import { fetchFeeds } from '../../services/slices/feedSlice';
 import {
-  selectWsOrders,
-  selectWsConnected
-} from '../../services/slices/feedWebSocketSlice';
+  selectFeedOrders,
+  selectFeedLoading,
+  selectFeedError
+} from '../../services/slices/feedSlice';
 
 import { FeedUI } from '@ui-pages';
 import { Preloader } from '@ui';
@@ -12,28 +14,29 @@ import { Preloader } from '@ui';
 export const Feed: FC = () => {
   const dispatch = useDispatch();
 
-  const orders = useSelector(selectWsOrders);
-  const isConnected = useSelector(selectWsConnected);
+  const orders = useSelector(selectFeedOrders);
+  const isLoading = useSelector(selectFeedLoading);
+  const error = useSelector(selectFeedError);
 
   useEffect(() => {
-    dispatch({
-      type: 'feedWebSocket/connect',
-      payload: `${process.env.REACT_APP_WS_URL}/orders/all`
-    });
-
-    return () => {
-      dispatch({ type: 'feedWebSocket/disconnect' }); // отключаем при размонтировании
-    };
+    dispatch(fetchFeeds());
   }, [dispatch]);
 
-  if (!isConnected && orders.length === 0) return <Preloader />;
+  const handleGetFeeds = useCallback(() => {
+    dispatch(fetchFeeds());
+  }, [dispatch]);
 
-  const handleGetFeeds = () => {
-    dispatch({
-      type: 'feedWebSocket/connect',
-      payload: `${process.env.REACT_APP_WS_URL}/orders/all`
-    });
-  };
+  if (isLoading && orders.length === 0) {
+    return <Preloader />;
+  }
+
+  if (error) {
+    return (
+      <div className='text text_type_main-medium pt-10 text_color_error'>
+        Ошибка: {error}
+      </div>
+    );
+  }
 
   return <FeedUI orders={orders} handleGetFeeds={handleGetFeeds} />;
 };

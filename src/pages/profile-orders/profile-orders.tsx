@@ -1,34 +1,31 @@
 import { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from '../../services/store';
-import { getCookie } from '../../utils/cookie';
-
+import { fetchOrders } from '../../services/slices/ordersSlice';
 import {
-  selectProfileWsOrders,
-  selectProfileWsConnected
-} from '../../services/slices/profileOrdersWebSocketSlice';
-
+  selectOrders,
+  selectOrdersLoading,
+  selectOrdersError
+} from '../../services/slices/ordersSlice';
 import { ProfileOrdersUI } from '@ui-pages';
 import { Preloader } from '@ui';
 
 export const ProfileOrders: FC = () => {
   const dispatch = useDispatch();
 
-  const orders = useSelector(selectProfileWsOrders);
-  const isConnected = useSelector(selectProfileWsConnected);
+  const orders = useSelector(selectOrders);
+  const isLoading = useSelector(selectOrdersLoading);
+  const error = useSelector(selectOrdersError);
 
   useEffect(() => {
-    const token = getCookie('accessToken')?.replace('Bearer ', '');
-    dispatch({
-      type: 'profileOrdersWs/connect',
-      payload: `${process.env.REACT_APP_WS_URL}/orders?token=${token}`
-    });
-
-    return () => {
-      dispatch({ type: 'profileOrdersWs/disconnect' });
-    };
+    dispatch(fetchOrders());
   }, [dispatch]);
 
-  if (!isConnected && orders.length === 0) return <Preloader />;
+  if (isLoading && orders.length === 0) return <Preloader />;
+
+  if (error)
+    return (
+      <div className='text text_type_main-medium pt-10'>Ошибка: {error}</div>
+    );
 
   return <ProfileOrdersUI orders={orders} />;
 };
