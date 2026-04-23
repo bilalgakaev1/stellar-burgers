@@ -13,9 +13,11 @@ export const OrderInfo: FC = () => {
 
   useEffect(() => {
     if (!number) return;
-    getOrderByNumberApi(Number(number)).then((data) => {
-      if (data.orders.length) setOrderData(data.orders[0]);
-    });
+    getOrderByNumberApi(Number(number))
+      .then((data) => {
+        if (data.orders.length) setOrderData(data.orders[0]);
+      })
+      .catch((err) => console.error('Ошибка загрузки заказа:', err));
   }, [number]);
 
   const orderInfo = useMemo(() => {

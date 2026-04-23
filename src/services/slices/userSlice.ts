@@ -11,6 +11,7 @@ import {
 import { TUser } from '@utils-types';
 import { TLoginData, TRegisterData } from '../../utils/burger-api';
 import { RootState } from '../store';
+import { deleteCookie } from '../../utils/cookie';
 
 type TUserState = {
   user: TUser | null;
@@ -60,6 +61,7 @@ export const updateUser = createAsyncThunk(
 export const logoutUser = createAsyncThunk('user/logoutUser', async () => {
   await logoutApi();
   localStorage.removeItem('refreshToken');
+  deleteCookie('accessToken');
 });
 
 export const forgotPassword = createAsyncThunk(

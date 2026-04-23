@@ -24,8 +24,9 @@ export const ProtectedRoute: FC<TProtectedRouteProps> = ({
   }
 
   if (onlyUnAuth) {
+    const from = location.state?.from || { pathname: '/' };
     return user ? (
-      <Navigate to='/' replace state={{ from: location }} />
+      <Navigate to={from} replace state={{ from: location }} />
     ) : (
       <Outlet />
     );

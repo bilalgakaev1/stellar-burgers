@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
+import { useCallback } from 'react';
 import { useDispatch, useSelector } from '../../services/store'; // твой кастомный useSelector
 
 import { AppHeader } from '@components';
@@ -33,6 +34,8 @@ const App = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const background = location.state?.background;
+
+  const handleModalClose = useCallback(() => navigate(-1), [navigate]);
 
   const { isLoading: ingredientsLoading, error: ingredientsError } =
     useSelector((state) => state.ingredients);
@@ -69,6 +72,8 @@ const App = () => {
       <Routes location={background || location}>
         <Route path='/' element={<ConstructorPage />} />
         <Route path='/feed' element={<Feed />} />
+        <Route path='/feed/:number' element={<OrderInfo />} />
+        <Route path='/ingredients/:id' element={<IngredientDetails />} />
 
         {/* Только для неавторизованных */}
         <Route path='/login' element={<ProtectedRoute onlyUnAuth />}>
@@ -88,6 +93,7 @@ const App = () => {
         <Route element={<ProtectedRoute />}>
           <Route path='/profile' element={<Profile />} />
           <Route path='/profile/orders' element={<ProfileOrders />} />
+          <Route path='/profile/orders/:number' element={<OrderInfo />} />
         </Route>
 
         <Route path='*' element={<NotFound404 />} />
@@ -99,7 +105,7 @@ const App = () => {
           <Route
             path='/ingredients/:id'
             element={
-              <Modal title='Детали ингредиента' onClose={() => navigate(-1)}>
+              <Modal title='Детали ингредиента' onClose={handleModalClose}>
                 <IngredientDetails />
               </Modal>
             }
@@ -107,7 +113,7 @@ const App = () => {
           <Route
             path='/feed/:number'
             element={
-              <Modal title='Информация о заказе' onClose={() => navigate(-1)}>
+              <Modal title='Информация о заказе' onClose={handleModalClose}>
                 <OrderInfo />
               </Modal>
             }
@@ -115,7 +121,7 @@ const App = () => {
           <Route
             path='/profile/orders/:number'
             element={
-              <Modal title='Информация о заказе' onClose={() => navigate(-1)}>
+              <Modal title='Информация о заказе' onClose={handleModalClose}>
                 <OrderInfo />
               </Modal>
             }
