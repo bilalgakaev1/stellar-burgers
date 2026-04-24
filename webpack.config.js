@@ -1,8 +1,8 @@
+require('dotenv').config();
 const path = require('path');
 const webpack = require('webpack');
 const ESLintPlugin = require('eslint-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const Dotenv = require('dotenv-webpack');
 
 module.exports = {
   entry: path.resolve(__dirname, './src/index.tsx'),
@@ -16,7 +16,9 @@ module.exports = {
       {
         test: /\.(ts)x?$/,
         exclude: /node_modules/,
-        use: { loader: 'ts-loader' }
+        use: {
+          loader: 'ts-loader'
+        }
       },
       {
         test: /\.css$/,
@@ -30,7 +32,9 @@ module.exports = {
           'style-loader',
           {
             loader: 'css-loader',
-            options: { modules: true }
+            options: {
+              modules: true
+            }
           }
         ]
       },
@@ -51,14 +55,25 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: './public/index.html'
     }),
-    new Dotenv(),
     new webpack.DefinePlugin({
       'process.env.BURGER_API_URL': JSON.stringify(process.env.BURGER_API_URL),
       'process.env.REACT_APP_WS_URL': JSON.stringify(process.env.REACT_APP_WS_URL),
     }),
   ],
   resolve: {
-    extensions: ['*', '.js', '.jsx', '.ts', '.tsx', '.json', '.css', '.scss', '.png', '.svg', '.jpg'],
+    extensions: [
+      '*',
+      '.js',
+      '.jsx',
+      '.ts',
+      '.tsx',
+      '.json',
+      '.css',
+      '.scss',
+      '.png',
+      '.svg',
+      '.jpg'
+    ],
     alias: {
       '@pages': path.resolve(__dirname, './src/pages'),
       '@components': path.resolve(__dirname, './src/components'),
