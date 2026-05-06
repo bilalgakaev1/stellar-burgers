@@ -1,6 +1,10 @@
 export default {
   preset: 'ts-jest',
   testEnvironment: 'jsdom',
+  collectCoverageFrom: [
+    'src/services/**/*.{ts,tsx}',
+    '!src/services/**/*.test.{ts,tsx}'
+  ],
   moduleNameMapper: {
     '\\.(css|module\\.css)$': 'jest-css-modules-transform',
     '^@api$': '<rootDir>/src/utils/burger-api.ts',
