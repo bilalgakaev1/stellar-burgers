@@ -1,5 +1,3 @@
-const BASE_URL = 'http://localhost:4000';
-
 describe('Конструктор бургера', () => {
   beforeEach(() => {
     cy.intercept('GET', '/api/ingredients', {
@@ -11,7 +9,9 @@ describe('Конструктор бургера', () => {
     }).as('getUser');
 
     cy.setCookie('accessToken', 'Bearer test-token');
-    localStorage.setItem('refreshToken', 'test-refresh-token');
+    cy.window().then((win) => {
+        win.localStorage.setItem('refreshToken', 'test-refresh-token');
+    });
 
     cy.visit('/');
     cy.wait('@getIngredients');
@@ -48,6 +48,12 @@ describe('Конструктор бургера', () => {
     cy.get('[data-testid="modal"]').should('not.exist');
   });
 
+  it('показывает данные ингредиента в модальном окне', () => {
+  cy.get('[data-testid="ingredient-item"]').first().find('a').click();
+  cy.get('[data-testid="modal"]').should('exist');
+  cy.get('[data-testid="modal"]').should('contain', 'Краторная булка N-200i');
+});
+
   describe('Создание заказа', () => {
     beforeEach(() => {
       cy.intercept('POST', '/api/orders', {
@@ -71,6 +77,11 @@ describe('Конструктор бургера', () => {
       cy.get('[data-testid="modal"]').should('not.exist');
       // Конструктор пустой
       cy.get('[data-testid="constructor-bun-top"]').should('not.exist');
+    });
+
+    afterEach(() => {
+        cy.clearCookies();
+        cy.clearLocalStorage();
     });
   });
 });
