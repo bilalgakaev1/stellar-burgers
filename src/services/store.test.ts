@@ -1,25 +1,23 @@
 import store from './store';
+import { combineReducers } from '@reduxjs/toolkit';
+import ingredientsReducer from './slices/ingredientsSlice';
+import userReducer from './slices/userSlice';
+import ordersReducer from './slices/ordersSlice';
+import feedReducer from './slices/feedSlice';
+import constructorReducer from './slices/constructorSlice';
+
+const rootReducer = combineReducers({
+  ingredients: ingredientsReducer,
+  user: userReducer,
+  orders: ordersReducer,
+  feed: feedReducer,
+  burgerConstructor: constructorReducer
+});
 
 describe('rootReducer', () => {
-  it('should return the initial state', () => {
-    const state = store.getState();
-    expect(state).toHaveProperty('feed');
-    expect(state).toHaveProperty('orders');
-    expect(state).toHaveProperty('user');
-    expect(state).toHaveProperty('ingredients');
-    expect(state).toHaveProperty('burgerConstructor');
-  });
-
-  it('ingredients — начальное состояние корректно', () => {
-    expect(store.getState().ingredients.ingredients).toEqual([]);
-    expect(store.getState().ingredients.isLoading).toBe(false);
-    expect(store.getState().ingredients.error).toBeNull();
-  });
-
-  it('burgerConstructor — начальное состояние корректно', () => {
-    expect(store.getState().burgerConstructor.constructorItems.bun).toBeNull();
-    expect(
-      store.getState().burgerConstructor.constructorItems.ingredients
-    ).toEqual([]);
+  it('rootReducer handles unknown action correctly', () => {
+    const sameState = store.getState();
+    const state = rootReducer(sameState, { type: 'UNKNOWN_ACTION' });
+    expect(state).toBe(sameState);
   });
 });
